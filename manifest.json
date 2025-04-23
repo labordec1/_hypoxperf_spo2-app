@@ -1,16 +1,8 @@
 {
-  "manifest_version": 2,
-  "name": "My Project",
+  "manifest_version": 1,
+  "name": "_hypoxperf_spo2-app",
   "version": "1.0.0",
-  "description": "A sample manifest file for my project.",
-  "icons": {
-    "48": "icon.png"
-  },
-  "permissions": [],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
+  "persistent": false,
   "locale": "fr_FR",
   "platform": "shiny",
   "primary_document": "app.R",
