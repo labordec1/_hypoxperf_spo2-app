@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "My Project",
+  "version": "1.0.0",
+  "description": "A sample manifest file for my project.",
+  "icons": {
+    "48": "icon.png"
+  },
+  "permissions": [],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "locale": "fr_FR",
+  "platform": "shiny",
+  "primary_document": "app.R",
+  "packages": [
+    {
+      "name": "shiny",
+      "version": "1.7.4"
+    },
+    {
+      "name": "ggplot2",
+      "version": "3.4.0"
+    }
+  ],
+  "files": [
+    "app.R",
+    "data.csv",
+    "styles.css"
+  ]
+}
