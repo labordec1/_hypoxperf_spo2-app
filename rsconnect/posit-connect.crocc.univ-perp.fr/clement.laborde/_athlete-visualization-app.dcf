@@ -1,0 +1,12 @@
+name: _athlete-visualization-app
+title: _athlete-visualization-app
+username: clement.laborde
+account: clement.laborde
+server: posit-connect.crocc.univ-perp.fr
+hostUrl: http://posit-connect.crocc.univ-perp.fr/__api__
+appId: 14
+bundleId: 50
+url: http://posit-connect.crocc.univ-perp.fr/content/12c772f5-37e4-45db-bbed-3907e2e01555/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
