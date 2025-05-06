@@ -28,10 +28,10 @@ plot_data <- function(donnees, spo2_max, spo2_min, seuil, HB, REDTA) {
   ggplotly(p)
 }
 
-## Création du plot du HB de l'athlète sélectionné
+## Création du plot de l'évolution du HB de l'athlète sélectionné
 
 create_hb_plot <- function(data) {
-  p <- ggplot(data, aes(x = Count)) +
+  p <- ggplot(data, aes(x = Nuit)) +
     geom_line(aes(y = HB, group = Stage, color = Stage)) +
     scale_y_continuous(
       name = "HB (%)",
@@ -45,9 +45,9 @@ create_hb_plot <- function(data) {
   ggplotly(p)
 }
 
-## Création du plot du REDTA de l'athlète sélectionné
+## Création du plot de l'évolution REDTA de l'athlète sélectionné
 create_redta_plot <- function(data) {
-  p <- ggplot(data, aes(x = Count)) +
+  p <- ggplot(data, aes(x = Nuit)) +
     geom_line(aes(y = REDTA, group = Stage, color = Stage)) +
     scale_y_continuous(
       name = "REDTA (%h)",
