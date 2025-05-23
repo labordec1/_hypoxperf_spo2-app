@@ -130,6 +130,13 @@ process_athlete_data <- function(athlete_name, root_dir, seuil, spo2_max = 95, s
       DureeTotale = x$result$duree_totale
     )
   }))
+  
+  ##normalisation
+  results_df <- results_df %>% 
+    mutate(HB_norm = (HB - min(HB))/(max(HB)-min(HB))) %>% 
+    mutate(REDTA_norm = (REDTA - min(REDTA))/(max(REDTA)-min(REDTA)))
+  
+  print(results_df)
 
   format_data_by_athlete(results_df, athlete_name)
 }
