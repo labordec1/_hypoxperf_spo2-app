@@ -23,11 +23,6 @@ source("R/plotting.R")
 ## Liste des athlètes
 athletes <- list.dirs(root_dir, recursive = FALSE)
 
-## Chargement des résultats globaux
-#results <- read_csv("data/results.csv")
-
-
-
 # CREATION DE L'UI
 
 ui <- page_navbar(
@@ -67,6 +62,23 @@ ui <- page_navbar(
         plotlyOutput("redtaPlot")
       )
     )
+  ),
+  
+  # Gestion des fichiers
+  nav_panel(
+    title = "Gestion des fichiers",
+    sidebarLayout(
+      sidebarPanel(
+        textInput("new_athlete", "Créer un nouvel athlète (nom du dossier):"),
+        selectInput("existing_athlete", "Sélectionner un athlète existant:", choices = basename(athletes)),
+        textInput("new_stage", "Créer un nouveau stage (nom du dossier):"),
+        fileInput("new_files", "Déposer des fichiers bruts (.asc):", multiple = TRUE, accept = c(".asc")),
+        actionButton("submit_changes", "Appliquer les modifications")
+      ),
+      mainPanel(
+        verbatimTextOutput("action_status") # Afficher le statut des actions
+      )
+    )
   )
 )
 
@@ -81,7 +93,7 @@ server <- function(input, output, session) {
   output$stageSelector <- renderUI({
     req(input$athlete)
     selected_athlete <- input$athlete
-    stage_dirs <- list.dirs(file.path(root_dir, selected_athlete), recursive = FALSE)
+    stage_dirs <- list.dirs(file.path(root_dir, selected_athlete), recursive = FALSE) # nolint
     selectInput("stage", "Choisir un stage:", choices = basename(stage_dirs))
   })
   
@@ -90,8 +102,8 @@ server <- function(input, output, session) {
     req(input$athlete, input$stage)
     selected_stage <- input$stage
     selected_athlete <- input$athlete
-    files <- list.files(file.path(root_dir, selected_athlete, selected_stage), pattern = "\\.asc$", full.names = TRUE)
-    dates <- extract_and_format_date(basename(files))
+    files <- list.files(file.path(root_dir, selected_athlete, selected_stage), pattern = "\\.asc$", full.names = TRUE) # nolint
+    dates <- extract_and_format_date(basename(files)) # nolint
     sorted_indices <- order(dates)  # Indices des dates triées
     files <- files[sorted_indices]  # Trier les fichiers selon les dates
     dates <- dates[sorted_indices]  # Trier les dates
@@ -169,6 +181,58 @@ output$downloadData <- downloadHandler(
     write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8")
   }
 )
+
+observeEvent(input$submit_changes, {
+  # Initialiser le message de statut
+  status_message <- ""
+
+  # Créer un nouvel athlète
+  if (input$new_athlete != "") {
+    athlete_path <- file.path(root_dir, input$new_athlete)
+    if (!dir.exists(athlete_path)) {
+      dir.create(athlete_path)
+      status_message <- paste(status_message, "Athlète créé:", input$new_athlete, "\n")
+    } else {
+      status_message <- paste(status_message, "Le dossier de l'athlète existe déjà.\n")
+    }
+  }
+
+  # Créer un nouveau stage
+  if (input$new_stage != "" && input$existing_athlete != "") {
+    stage_path <- file.path(root_dir, input$existing_athlete, input$new_stage)
+    if (!dir.exists(stage_path)) {
+      dir.create(stage_path)
+      status_message <- paste(status_message, "Stage créé:", input$new_stage, "pour l'athlète", input$existing_athlete, "\n")
+    } else {
+      status_message <- paste(status_message, "Le dossier du stage existe déjà.\n")
+    }
+  }
+
+  # Ajouter des fichiers bruts
+  if (!is.null(input$new_files)) {
+    files <- input$new_files$datapath
+    filenames <- input$new_files$name
+    target_dir <- if (input$new_stage != "" && input$existing_athlete != "") {
+      file.path(root_dir, input$existing_athlete, input$new_stage)
+    } else if (input$existing_athlete != "") {
+      file.path(root_dir, input$existing_athlete)
+    } else {
+      NULL
+    }
+
+    if (!is.null(target_dir) && dir.exists(target_dir)) {
+      for (i in seq_along(files)) {
+        file.copy(files[i], file.path(target_dir, filenames[i]))
+      }
+      status_message <- paste(status_message, "Fichiers ajoutés dans:", target_dir, "\n")
+    } else {
+      status_message <- paste(status_message, "Erreur: le dossier cible n'existe pas.\n")
+    }
+  }
+
+  # Afficher le statut des actions
+  output$action_status <- renderText({ status_message })
+})
 }
 
 
