@@ -1,10 +1,8 @@
-#################################################################
-# HYPOXPERF - SPo2 - Analayse de la charge hypoxique des athlètes
-#################################################################
+#### HYPOXPERF- SPo2 - Analyse de la charge hypoxique des athlètes ####
 
-## PARAMETRAGE ##
+#### PARAMETRAGE ####
 
-# CHARGEMENT DES LIBRAIRIES
+##### CHARGEMENT DES LIBRAIRIES ====
 library(shiny)
 library(tidyverse)
 library(lubridate)
@@ -14,26 +12,29 @@ library(zoo)
 library(bslib)
 library(plotly)
 
-# DEFINITION DE L'ESPACE DE TRAVAIL
+##### DEFINITION DE L'ESPACE DE TRAVAIL =====
 app_dir <- getwd()
 root_dir <- file.path(app_dir, "data", "PROD")
 
-# CHARGEMENT DES FONCTIONS
+##### CHARGEMENT DES FONCTIONS ====
 source("R/data_processing.R")
 source("R/plotting.R")
 
+##### PARAMÈTRES ====
+spo2_max <- 95
+spo2_min <- 85
 
-# LISTING DES ATHLETES
+##### LISTING DES ATHLETES ====
 athletes <- list.dirs(root_dir, recursive = FALSE)
 
-## CREATION DE L'INTERFACE FRONT ##
+#### FRONTEND ####
 
 ui <- page_navbar(
   title = "HYPOXPERF - SpO2",
   bg = "#2D89C8",
   inverse = TRUE,
   
-  # ONGLET : "Visualisation SpO2"
+  ##### ONGLET : "Visualisation SpO2" ====
   nav_panel(
     title = "Visualisation SpO2",
     sidebarLayout(
@@ -51,7 +52,7 @@ ui <- page_navbar(
     )
   ),
   
-  # ONGLET : "Évolution Charge Hypoxique"
+  ##### ONGLET : "Évolution Charge Hypoxique" ====
   nav_panel(
     title = "Évolution Charge Hypoxique",
     sidebarLayout(
@@ -69,11 +70,11 @@ ui <- page_navbar(
 )
 
 
-## BACKEND ##
+#### BACKEND ####
 
 server <- function(input, output, session) {
   
-## ONGLET : "Visualisation SpO2"
+##### ONGLET : "Visualisation SpO2" ====
   
   # Sélection du stage
   output$stageSelector <- renderUI({
@@ -122,66 +123,60 @@ server <- function(input, output, session) {
   output$dataPlot <- renderPlotly({
     req(data())
     
-    # Définition des seuils
-    spo2_max <- 95
-    spo2_min <- 85
-    seuil <- input$seuil # Utilisation de la valeur du curseur
+    # Définition du seuil de désaturation par l'utilisateur
+    seuil <- input$seuil
     
     # Traitement des données brutes et calcul de la charge hypoxique
     donnees <- process_row_data(data(), spo2_max, spo2_min, seuil)
     calcul_hypoxie <- calculate_burden(donnees, seuil)
     
     # Plot des données
-    plot_data(donnees, spo2_max, spo2_min, seuil, calcul_hypoxie$HB, calcul_hypoxie$REDTA)
+    plot_spo2_by_night(donnees, spo2_max, spo2_min, seuil, calcul_hypoxie$HB, calcul_hypoxie$REDTA)
   })
   
-## ONGLET : "Evolution Charge Hypoxique"
+##### ONGLET : "Évolution Charge Hypoxique" ====
 
-# Calcul des données pour l'athlète sélectionné
+# Calcul de la charge hypoxique pour l'athlète sélectionné
 selected_data <- reactive({
   req(input$athlete_global, input$seuil_global)
   
-  # Appel à la fonction process_athlete_data avec root_dir
+  # Appel à la fonction process_athlete_data
   process_athlete_data(
     athlete_name = input$athlete_global,
     root_dir = root_dir,
     seuil = input$seuil_global,
-    spo2_max = 95,
-    spo2_min = 85
+    spo2_max, 
+    spo2_min
   )
 })
 
-# Graphique HB
+# Plot graphique HB
 output$hbPlot <- renderPlotly({
-  data <- selected_data()  # Récupérer les données calculées
-  # Appeler la fonction create_hb_plot avec les données
+  data <- selected_data()
   create_hb_plot(data)
 })
 
-# Graphique REDTA
+# Plot graphique REDTA
 output$redtaPlot <- renderPlotly({
-  data <- selected_data()  # Récupérer les données calculées
-  # Appeler la fonction create_redta_plot avec les données
+  data <- selected_data()
   create_redta_plot(data)
 })
 
+# Extraction des données en fichier .csv
 output$downloadData <- downloadHandler(
+  #Création du nom de fichier
   filename = function() {
     paste("donnees_hypoxie_",input$seuil_global,"_", input$athlete_global, "_", Sys.Date(), ".csv", sep = "")
   },
+  #Création du contenu du fichier
   content = function(file) {
-    # Récupérer les données calculées
     data <- selected_data()
-    req(data) # Vérifier que les données existent
-    
-    # Écrire les données dans un fichier CSV
+    req(data)
     write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8")
   }
 )
 }
 
 
-# LANCEMENT DE L'APPLI
+#### LANCEMENT APPLI ####
 shinyApp(ui = ui, server = server)
-
-
