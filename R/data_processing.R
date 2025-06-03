@@ -6,7 +6,7 @@ library(dplyr)
 library(lubridate)
 library(stringr)
 library(tidyr)
-library(roxygen2)
+#library(roxygen2)
 
 
 ##### Lecture de fichiers .asc ====
