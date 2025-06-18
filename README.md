@@ -1,14 +1,13 @@
-# Athlete Visualization App
+# HYPOXPERF - SpO2 Visualisation App
 
 ## Overview
-The Athlete Visualization App is an interactive application built in R that allows users to select an athlete from a dataset and visualize their performance metrics over time. The app provides insights into various metrics such as HB and REDTA, helping users analyze the data effectively.
+HYPOXPERF - SpO2 Visualisation App is an interactive application built in R that allows users to select an athlete from a dataset and visualize their performance metrics over time. The app provides insights into various metrics such as HB and REDTA, helping users analyze the data effectively.
 
 ## Project Structure
 ```
 athlete-visualization-app
 ├── app.R                  # Main application file
 ├── data
-│   └── results.csv # Dataset containing results for various athletes
 │   └── PROD # All row files for each athletes
 ├── R
 │   ├── data_processing.R  # Functions for processing data
@@ -41,12 +40,10 @@ shiny::runApp("app.R")
 - R (version 4.0 or higher)
 - Shiny
 - ggplot2
-- dplyr
-- readr
 - tidyverse
-
-## Contributing
-Contributions to enhance the functionality of the app are welcome. Please feel free to submit a pull request or open an issue for any suggestions or improvements.
-
-## License
-This project is licensed under the MIT License.# _hypoxperf_spo2-app
+- lubridate
+- DescTools
+- zoo
+- bslib
+- plotly
+- stringr
