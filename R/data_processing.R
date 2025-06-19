@@ -1,14 +1,5 @@
 #### LISTE DES FONCTIONS DE TRAITEMENT DES DONNÉES ####
 
-##### CHARGEMENT DES LIBRAIRIES ====
-library(readr)
-library(dplyr)
-library(lubridate)
-library(stringr)
-library(tidyr)
-#library(roxygen2)
-
-
 ##### Lecture de fichiers .asc ====
 #' Permet de lire un fichier .asc, et de retirer les mentions inutiles
 #' 
