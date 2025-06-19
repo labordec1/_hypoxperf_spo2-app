@@ -1,11 +1,5 @@
 #### LISTE DES FONCTIONS POUR VISUALISATION ####
 
-##### CHARGEMENT DES LIBRAIRIES ====
-library(ggplot2)
-library(dplyr)
-library(plotly)
-
-
 ##### Plot SpO2 par nuit ====
 #' Permet d'afficher la courbe d'évolution de la SpO2 d'un athlète pour une nuit
 #' 
