@@ -88,15 +88,3 @@ create_redta_plot <- function(data) {
   ggplotly(p)
 }
 
-##### Création de l'affichage groupé ====
-#' Permet d'afficher les deux graphiques HB et REDTA
-#' 
-#' @param data tibble de données contenant les valeurs de HB et REDTA issue des calculs charge hypoxique
-#' @return affichage des deux graphiques dans l'interface
-#' 
-generate_athlete_plots <- function(data) {
-  fig1 <- create_hb_plot(data)
-  fig2 <- create_redta_plot(data)
-  
-  subplot(fig1, fig2, titleX = TRUE)
-}
